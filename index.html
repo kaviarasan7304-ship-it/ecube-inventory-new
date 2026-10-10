@@ -242,6 +242,7 @@ footer{
     <input type="text" id="category" placeholder="Enter Category">
 
     <input type="text" id="itemName" placeholder="Enter Item Name">
+    <input type="text" id="location" placeholder="Enter Location (e.g. Computer Lab)">
 
     <input type="number" id="quantity" placeholder="Enter Quantity">
 
@@ -263,6 +264,7 @@ footer{
             <tr>
                 <th>Category</th>
                 <th>Item Name</th>
+                <th>Location</th>
                 <th>Quantity</th>
                 <th>Status</th>
               <th>Date &amp; Time</th>
@@ -301,14 +303,16 @@ document.getElementById("addItemBtn").addEventListener("click", async () => {
     const category = document.getElementById("category").value.trim();
     const itemName = document.getElementById("itemName").value.trim();
     const quantity = Number(document.getElementById("quantity").value);
+    const location = document.getElementById("location").value.trim();
 
-    if (!category || !itemName || !quantity) {
+if (!category || !itemName || !location || !quantity) {
         alert("Please fill all fields");
         return;
     }
 
     try {
         await addDoc(collection(db, "inventory"), {
+            location: location,
             category: category,
             itemName: itemName,
             quantity: quantity,
@@ -320,6 +324,7 @@ document.getElementById("addItemBtn").addEventListener("click", async () => {
         document.getElementById("category").value = "";
         document.getElementById("itemName").value = "";
         document.getElementById("quantity").value = "";
+        document.getElementById("location").value = "";
 
     } catch (error) {
         console.error(error);
@@ -352,6 +357,7 @@ let lowStock = 0;
         row.innerHTML = `
     <td>${item.category || ""}</td>
     <td>${item.itemName || ""}</td>
+    <td>${item.location || "-"}</td>
     <td>${item.quantity || 0}</td>
     <td>${Number(item.quantity) > 10 ? "✓ Available" : "⚠ Low Stock"}</td>
     <td>${item.createdAt ? new Date(item.createdAt.seconds * 1000).toLocaleString() : "-"}</td>
@@ -376,6 +382,8 @@ if (e.target.classList.contains("edit-btn")) {
 
     const itemName = prompt("Enter Item Name:");
     if (itemName === null) return;
+    const location = prompt("Enter Location:");
+if (location === null) return;
 
     const quantity = prompt("Enter Quantity:");
     if (quantity === null) return;
@@ -383,6 +391,7 @@ if (e.target.classList.contains("edit-btn")) {
     try {
         await updateDoc(doc(db, "inventory", id), {
             category: category,
+            location: location,
             itemName: itemName,
             quantity: Number(quantity)
         });
